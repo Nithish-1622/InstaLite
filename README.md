@@ -36,14 +36,14 @@ The backend connects with these settings
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/instagram_db?createDatabaseIfNotExist=true&...
 spring.datasource.username=${MYSQL_USERNAME:root}
-spring.datasource.password=${MYSQL_PASSWORD:root}
+spring.datasource.password=${MYSQL_PASSWORD:nith@123}
 ```
 
 * `createDatabaseIfNotExist=true` creates `instagram_db` automatically, so you
   normally do **not** need to run any SQL.
-* If your MySQL root password is different, either edit
-  `spring.datasource.password` or start the backend with an environment
-  variable (no secret in the file):
+* The default password above is this machine's local MySQL root password. If
+  yours differs, edit `spring.datasource.password` or start the backend with an
+  environment variable (keeps the secret out of the file):
 
 ```bash
 export MYSQL_PASSWORD=your_password     # Windows (cmd): set MYSQL_PASSWORD=your_password
@@ -118,8 +118,8 @@ All ordinary requests/responses are JSON; media upload uses
 | POST | `/api/users/{id}/follow` | Follow user (`?followerId=`) | **201** | 400 (already following), 404 |
 | DELETE | `/api/users/{id}/follow` | Unfollow user (`?followerId=`) | **200** | 400 (not following), 404 |
 | POST | `/api/posts` | Upload media + create post | **201** | 400 (bad type/size/no file), 404 (unknown user), 500 (disk error) |
-| GET | `/api/posts` | Feed (`?userId=` for one user) | **200** | 500 |
-| GET | `/api/posts/{id}` | Post details | **200** | 404 |
+| GET | `/api/posts` | Feed (`?userId=` = profile filter, `?currentUserId=` = viewer) | **200** | 500 |
+| GET | `/api/posts/{id}` | Post details (`?currentUserId=` to know if *you* liked it) | **200** | 404 |
 | POST | `/api/posts/{id}/likes` | Like a post (`?userId=`) | **201** | 400 (already liked), 404 |
 | DELETE | `/api/posts/{id}/likes` | Unlike a post (`?userId=`) | **200** | 400 (not liked), 404 |
 | POST | `/api/posts/{id}/comments` | Add a comment | **201** | 400 (empty text), 404 |

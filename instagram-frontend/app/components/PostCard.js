@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import CommentSection from "./CommentSection";
 import {
@@ -52,6 +52,13 @@ export default function PostCard({ post, onChanged }) {
   }
 
   const author = post.user || {};
+
+  // Keep the local like state in sync when the feed is re-fetched, e.g. after
+  // the demo user switched or a like/comment request finished.
+  useEffect(() => {
+    setLiked(!!post.likedByCurrentUser);
+    setLikeCount(post.likeCount || 0);
+  }, [post.likedByCurrentUser, post.likeCount]);
 
   return (
     <article className="card">

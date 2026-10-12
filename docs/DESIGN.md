@@ -13,7 +13,7 @@ is (or would be) implemented in this repository.
 | # | Purpose | Method | URI | Request | Response |
 |---|---------|--------|-----|---------|----------|
 | 1 | Upload media (create post) | **POST** | `/api/posts` | `multipart/form-data`: `file`, `caption`, `userId` | `201` + post JSON |
-| 2 | Get post details | **GET** | `/api/posts/{id}` | query `userId` (optional, to know if *I* liked it) | `200` + post JSON |
+| 2 | Get post details | **GET** | `/api/posts/{id}` | query `currentUserId` (optional, to know if *I* liked it) | `200` + post JSON |
 | 3 | Follow user | **POST** | `/api/users/{id}/follow` | query `followerId` | `201` + message |
 | 4 | Like post | **POST** | `/api/posts/{id}/likes` | query `userId` | `201` + message |
 | 5 | Add comment | **POST** | `/api/posts/{id}/comments` | JSON `{ "userId", "text" }` | `201` + comment JSON |

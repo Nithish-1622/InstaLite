@@ -64,10 +64,18 @@ public class PostService {
         if (file == null || file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "media file is required");
         }
-        String contentType = file.getContentType() == null ? "" : file.getContentType().toLowerCase(Locale.ROOT);
+        String declaredType = file.getContentType() == null ? "" : file.getContentType().toLowerCase(Locale.ROOT);
+        // Some HTTP clients (curl on Windows, Postman) do not know the media
+        // type of an .mp4/.mov file and send "application/octet-stream".
+        // Fall back to the file extension, then apply the allow-list.
+        String contentType = declaredType;
+        if (contentType.isEmpty() || "application/octet-stream".equals(contentType)) {
+            contentType = typeFromFilename(file.getOriginalFilename());
+        }
         if (!ALLOWED_TYPES.contains(contentType)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "unsupported file type: " + contentType + " (allowed: jpg, png, gif, webp, mp4, webm, mov)");
+                    "unsupported file type: " + (declaredType.isEmpty() ? "unknown" : declaredType)
+                            + " (allowed: jpg, png, gif, webp, mp4, webm, mov)");
         }
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "file is larger than 50 MB");
@@ -91,12 +99,13 @@ public class PostService {
         return saved;
     }
 
-    /** GET /api/posts (optionally ?userId=) - newest first. */
-    public List<Post> getFeed(Long userId) {
+    /** GET /api/posts - newest first; optionally filtered by profile and
+     *  annotated with the likes of the current user. */
+    public List<Post> getFeed(Long userId, Long currentUserId) {
         List<Post> posts = userId == null
                 ? postRepository.findAllByOrderByCreatedAtDesc()
                 : postRepository.findByUser_IdOrderByCreatedAtDesc(userId);
-        posts.forEach(p -> fillCounts(p, userId));
+        posts.forEach(p -> fillCounts(p, currentUserId));
         return posts;
     }
 
@@ -177,6 +186,22 @@ public class PostService {
                 yield ".jpg";
             }
         };
+    }
+
+    /** Maps a file name to its media type (fallback when the client sends no type). */
+    private String typeFromFilename(String name) {
+        if (name == null) {
+            return "";
+        }
+        String lower = name.toLowerCase(Locale.ROOT);
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+        if (lower.endsWith(".png")) return "image/png";
+        if (lower.endsWith(".gif")) return "image/gif";
+        if (lower.endsWith(".webp")) return "image/webp";
+        if (lower.endsWith(".mp4")) return "video/mp4";
+        if (lower.endsWith(".webm")) return "video/webm";
+        if (lower.endsWith(".mov")) return "video/quicktime";
+        return "";
     }
 
     private void fillCounts(Post post, Long currentUserId) {

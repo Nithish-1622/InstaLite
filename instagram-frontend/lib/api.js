@@ -69,12 +69,16 @@ export function unfollowUser(id, followerId) {
 // ------------------------------------------------------------------
 // Posts
 // ------------------------------------------------------------------
-export function getPosts(userId) {
-  return userId ? request(`/api/posts?userId=${userId}`) : request("/api/posts");
+export function getPosts(userId, currentUserId) {
+  const params = new URLSearchParams();
+  if (userId) params.set("userId", userId); // profile filter
+  if (currentUserId) params.set("currentUserId", currentUserId); // who is asking
+  const query = params.toString();
+  return request(`/api/posts${query ? `?${query}` : ""}`);
 }
 
-export function getPost(id, userId) {
-  const suffix = userId ? `?userId=${userId}` : "";
+export function getPost(id, currentUserId) {
+  const suffix = currentUserId ? `?currentUserId=${currentUserId}` : "";
   return request(`/api/posts/${id}${suffix}`);
 }
 

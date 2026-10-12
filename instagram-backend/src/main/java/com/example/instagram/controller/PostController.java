@@ -19,8 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
  * Posts and likes.
  *
  * POST   /api/posts               upload media + create post (multipart) -> 201
- * GET    /api/posts               feed (optional ?userId=)               -> 200
- * GET    /api/posts/{id}          post details                           -> 200
+ * GET    /api/posts               feed (?userId= profile filter,
+ *                                                 ?currentUserId= viewer)  -> 200
+ * GET    /api/posts/{id}          post details (?currentUserId=)          -> 200
  * POST   /api/posts/{id}/likes    like a post (?userId=)                 -> 201
  * DELETE /api/posts/{id}/likes    unlike a post (?userId=)               -> 200
  */
@@ -43,14 +44,18 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> getFeed(@RequestParam(value = "userId", required = false) Long userId) {
-        return postService.getFeed(userId);
+    public List<Post> getFeed(@RequestParam(value = "userId", required = false) Long userId,
+                              @RequestParam(value = "currentUserId", required = false) Long currentUserId) {
+        // userId        -> optional filter (posts of one profile)
+        // currentUserId -> who is asking, so the response can say whether
+        //                  that user already liked each post
+        return postService.getFeed(userId, currentUserId);
     }
 
     @GetMapping("/{id}")
     public Post getPost(@PathVariable Long id,
-                        @RequestParam(value = "userId", required = false) Long userId) {
-        return postService.getPost(id, userId);
+                        @RequestParam(value = "currentUserId", required = false) Long currentUserId) {
+        return postService.getPost(id, currentUserId);
     }
 
     @PostMapping("/{id}/likes")

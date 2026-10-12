@@ -55,14 +55,24 @@
       "name": "5. Get all posts (feed)",
       "request": {
         "method": "GET",
-        "url": { "raw": "{{baseUrl}}/api/posts", "host": ["{{baseUrl}}"], "path": ["api", "posts"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/posts?currentUserId=2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "posts"],
+          "query": [{ "key": "currentUserId", "value": "2" }]
+        }
       }
     },
     {
       "name": "6. Get post details",
       "request": {
         "method": "GET",
-        "url": { "raw": "{{baseUrl}}/api/posts/1", "host": ["{{baseUrl}}"], "path": ["api", "posts", "1"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/posts/1?currentUserId=2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "posts", "1"],
+          "query": [{ "key": "currentUserId", "value": "2" }]
+        }
       }
     },
     {
