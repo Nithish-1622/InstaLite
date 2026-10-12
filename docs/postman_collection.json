@@ -1,0 +1,133 @@
+{
+  "info": {
+    "name": "InstaLite API",
+    "description": "Instagram-style platform - all REST endpoints (backend must run on http://localhost:8080)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" }
+  ],
+  "item": [
+    {
+      "name": "1. Create user",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] },
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"charlie\",\n  \"profileImage\": \"\"\n}" }
+      }
+    },
+    {
+      "name": "2. List users",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+      }
+    },
+    {
+      "name": "3. Get user profile",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/users/1?followerId=2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "1"],
+          "query": [{ "key": "followerId", "value": "2" }]
+        }
+      }
+    },
+    {
+      "name": "4. Upload media and create post",
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "file", "type": "file", "src": [] },
+            { "key": "caption", "value": "Summer vibes", "type": "text" },
+            { "key": "userId", "value": "1", "type": "text" }
+          ]
+        },
+        "url": { "raw": "{{baseUrl}}/api/posts", "host": ["{{baseUrl}}"], "path": ["api", "posts"] }
+      }
+    },
+    {
+      "name": "5. Get all posts (feed)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/posts", "host": ["{{baseUrl}}"], "path": ["api", "posts"] }
+      }
+    },
+    {
+      "name": "6. Get post details",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/posts/1", "host": ["{{baseUrl}}"], "path": ["api", "posts", "1"] }
+      }
+    },
+    {
+      "name": "7. Like post",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/posts/1/likes?userId=2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "posts", "1", "likes"],
+          "query": [{ "key": "userId", "value": "2" }]
+        }
+      }
+    },
+    {
+      "name": "8. Unlike post",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{baseUrl}}/api/posts/1/likes?userId=2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "posts", "1", "likes"],
+          "query": [{ "key": "userId", "value": "2" }]
+        }
+      }
+    },
+    {
+      "name": "9. Follow user",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/users/1/follow?followerId=2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "1", "follow"],
+          "query": [{ "key": "followerId", "value": "2" }]
+        }
+      }
+    },
+    {
+      "name": "10. Unfollow user",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{baseUrl}}/api/users/1/follow?followerId=2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "1", "follow"],
+          "query": [{ "key": "followerId", "value": "2" }]
+        }
+      }
+    },
+    {
+      "name": "11. Add comment",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/api/posts/1/comments", "host": ["{{baseUrl}}"], "path": ["api", "posts", "1", "comments"] },
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": 2,\n  \"text\": \"Great shot!\"\n}" }
+      }
+    },
+    {
+      "name": "12. Get post comments",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/posts/1/comments", "host": ["{{baseUrl}}"], "path": ["api", "posts", "1", "comments"] }
+      }
+    }
+  ]
+}

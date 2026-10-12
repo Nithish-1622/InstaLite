@@ -1,0 +1,14 @@
+# Install the backend / frontend build output
+instagram-backend/target/
+instagram-frontend/node_modules/
+instagram-frontend/.next/
+instagram-frontend/out/
+
+# Uploaded media (binary files) - keep the folder, ignore its contents
+instagram-backend/uploads/*
+!instagram-backend/uploads/.gitkeep
+
+# Logs and local environment
+*.log
+.env*.local
+.freebuff/

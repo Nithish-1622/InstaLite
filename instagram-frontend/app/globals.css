@@ -1,0 +1,411 @@
+/* ------------------------------------------------------------------
+   Global styles - plain CSS, no framework.
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #fafafa;
+  --card: #ffffff;
+  --border: #dbdbdb;
+  --text: #262626;
+  --muted: #8e8e8e;
+  --accent: #0095f6;
+  --accent-dark: #1877f2;
+  --danger: #ed4956;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  font-size: 15px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+/* ------------------------------ layout ------------------------------ */
+.container {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 88px 16px 48px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 8px 0 16px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.loading {
+  color: var(--muted);
+  text-align: center;
+  padding: 32px 0;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 32px 0;
+}
+
+/* ------------------------------ navbar ------------------------------ */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-inner {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 14px;
+  font-size: 14px;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
+.nav-user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-user select {
+  max-width: 150px;
+}
+
+/* ------------------------------ forms ------------------------------ */
+input[type="text"],
+input[type="file"],
+select,
+textarea {
+  font: inherit;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn {
+  font: inherit;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  cursor: pointer;
+  background: #efefef;
+  color: var(--text);
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-like {
+  background: transparent;
+  padding: 6px 8px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.btn-like.liked {
+  color: var(--danger);
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* ------------------------------ feed / post ------------------------------ */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f09433, #dc2743, #bc1888);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.post-media {
+  width: 100%;
+  max-height: 560px;
+  object-fit: contain;
+  background: #000;
+}
+
+.post-body {
+  padding: 10px 14px 14px;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px 0;
+}
+
+.like-count {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.caption {
+  margin: 8px 0 4px;
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.caption strong {
+  margin-right: 6px;
+}
+
+.post-meta {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* ------------------------------ comments ------------------------------ */
+.comment-section {
+  border-top: 1px solid var(--border);
+  padding: 10px 14px 14px;
+}
+
+.comment-toggle {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.comment {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.comment .avatar {
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+}
+
+.comment-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.comment-form input {
+  flex: 1;
+}
+
+/* ------------------------------ upload ------------------------------ */
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.form-row {
+  margin-bottom: 16px;
+}
+
+.form-row label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.preview {
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 8px;
+  margin-top: 10px;
+  background: #000;
+}
+
+/* ------------------------------ profile ------------------------------ */
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-head .avatar {
+  width: 76px;
+  height: 76px;
+  font-size: 30px;
+}
+
+.profile-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 18px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.profile-stats strong {
+  font-weight: 700;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ------------------------------ responsive ------------------------------ */
+@media (max-width: 560px) {
+  .navbar-inner {
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .nav-user select {
+    max-width: 110px;
+  }
+
+  .profile-head {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .container {
+    padding-top: 116px;
+  }
+}
