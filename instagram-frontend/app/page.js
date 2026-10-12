@@ -1,10 +1,13 @@
 import Feed from "./components/Feed";
+import Suggestions from "./components/Suggestions";
 
 export default function HomePage() {
   return (
-    <>
-      <h1 className="page-title">Home Feed</h1>
-      <Feed />
-    </>
+    <div className="home-layout">
+      <div className="feed-column">
+        <Feed />
+      </div>
+      <Suggestions />
+    </div>
   );
 }

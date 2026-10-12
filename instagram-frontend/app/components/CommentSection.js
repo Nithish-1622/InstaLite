@@ -1,20 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { addComment, formatDate, getComments, useCurrentUser } from "@/lib/api";
+import { EmojiIcon, HeartIcon, PersonIcon } from "./Icons";
+import {
+  addComment,
+  formatDate,
+  getComments,
+  mediaUrl,
+  useCurrentUser,
+} from "@/lib/api";
 
 /**
- * Comments for a single post: loads them from
- * GET /api/posts/{id}/comments and posts new ones to
- * POST /api/posts/{id}/comments.
+ * Comments of one post, laid out like Instagram: the list first and the
+ * "Add a comment…" row pinned at the bottom of the post.
  */
-export default function CommentSection({ postId, onCommentAdded }) {
+export default function CommentSection({ postId, onCommentAdded, onClose }) {
   const currentUser = useCurrentUser();
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+  const [liked, setLiked] = useState({});
 
   async function load() {
     setError("");
@@ -36,7 +43,7 @@ export default function CommentSection({ postId, onCommentAdded }) {
     event.preventDefault();
     if (!text.trim()) return;
     if (!currentUser) {
-      setError("Select a user in the top bar to comment.");
+      setError("Pick an account in the More menu to comment.");
       return;
     }
     setSending(true);
@@ -55,26 +62,50 @@ export default function CommentSection({ postId, onCommentAdded }) {
 
   return (
     <div className="comment-section">
-      {loading && <div className="muted">Loading comments…</div>}
+      {loading && <div className="loading">Loading comments…</div>}
       {error && <div className="error">{error}</div>}
 
       {!loading && comments.length === 0 && !error && (
-        <div className="muted">No comments yet. Be the first.</div>
+        <div className="empty" style={{ padding: "18px 0" }}>
+          No comments yet.
+          <br />
+          Start the conversation.
+        </div>
       )}
 
       {comments.map((comment) => (
         <div className="comment" key={comment.id}>
-          <div className="avatar">
-            {(comment.user?.username || "?").charAt(0).toUpperCase()}
+          <span className="avatar">
+            {comment.user?.profileImage ? (
+              <img src={mediaUrl(comment.user.profileImage)} alt="" />
+            ) : (
+              <PersonIcon size={18} />
+            )}
+          </span>
+          <div className="comment-body">
+            <span className="user">{comment.user?.username}</span>
+            {comment.text}
+            <div className="comment-meta">
+              <span>{formatDate(comment.createdAt)}</span>
+            </div>
           </div>
-          <div>
-            <strong>{comment.user?.username}</strong> {comment.text}
-            <div className="muted">{formatDate(comment.createdAt)}</div>
-          </div>
+          <button
+            className="comment-like"
+            aria-label="Like comment"
+            onClick={() => setLiked((l) => ({ ...l, [comment.id]: !l[comment.id] }))}
+          >
+            <HeartIcon size={12} filled={!!liked[comment.id]} />
+          </button>
         </div>
       ))}
 
-      <form className="comment-form" onSubmit={handleSubmit}>
+      <form
+        className={`add-comment ${text.trim() ? "has-text" : ""}`}
+        onSubmit={handleSubmit}
+      >
+        <button type="button" className="emoji" aria-label="Emoji" tabIndex={-1}>
+          <EmojiIcon />
+        </button>
         <input
           type="text"
           value={text}
@@ -82,10 +113,18 @@ export default function CommentSection({ postId, onCommentAdded }) {
           placeholder="Add a comment…"
           onChange={(e) => setText(e.target.value)}
         />
-        <button className="btn btn-primary btn-small" type="submit" disabled={sending}>
-          {sending ? "…" : "Post"}
+        <button className="btn-link" type="submit" disabled={sending}>
+          {sending ? "Posting…" : "Post"}
         </button>
       </form>
+
+      {onClose && (
+        <div style={{ padding: "4px 0 6px" }}>
+          <button className="btn-link" style={{ paddingLeft: 0 }} onClick={onClose}>
+            Hide comments
+          </button>
+        </div>
+      )}
     </div>
   );
 }

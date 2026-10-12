@@ -11,7 +11,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Navbar />
-        <main className="container">{children}</main>
+        <div className="main-area">
+          <div className="content-wrap">{children}</div>
+        </div>
       </body>
     </html>
   );

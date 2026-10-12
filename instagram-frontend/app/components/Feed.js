@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import PostCard from "./PostCard";
+import Stories from "./Stories";
 import { getPosts, useCurrentUser } from "@/lib/api";
 
 /**
@@ -61,6 +62,7 @@ export default function Feed({ userId }) {
 
   return (
     <div>
+      {!userId && <Stories />}
       {error && <div className="error">{error}</div>}
       {posts.map((post) => (
         <PostCard key={post.id} post={post} onChanged={load} />

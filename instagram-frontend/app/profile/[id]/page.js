@@ -2,9 +2,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Feed from "../../components/Feed";
+import PostCard from "../../components/PostCard";
+import {
+  CommentIcon,
+  GridIcon,
+  HeartIcon,
+  PersonIcon,
+  ReelsTabIcon,
+  SettingsIcon,
+  TaggedIcon,
+} from "../../components/Icons";
 import {
   followUser,
+  getPosts,
   getUser,
   mediaUrl,
   unfollowUser,
@@ -12,8 +22,8 @@ import {
 } from "@/lib/api";
 
 /**
- * User profile: avatar, counts, follow / unfollow button and the
- * posts published by this user.
+ * Instagram profile page: header (avatar, stats, bio), tabs and a
+ * three-column grid; clicking a thumbnail opens the post in a dialog.
  */
 export default function ProfilePage() {
   const params = useParams();
@@ -21,31 +31,43 @@ export default function ProfilePage() {
   const currentUser = useCurrentUser();
 
   const [profile, setProfile] = useState(null);
-  const [postsVersion, setPostsVersion] = useState(0);
+  const [posts, setPosts] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState("");
 
   const load = useCallback(async () => {
-    setLoading(true);
     setError("");
     try {
-      setProfile(await getUser(id, currentUser ? currentUser.id : null));
+      const viewerId = currentUser ? currentUser.id : null;
+      const [user, postData] = await Promise.all([
+        getUser(id, viewerId),
+        getPosts(id, viewerId),
+      ]);
+      setProfile(user);
+      setPosts(postData);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, currentUser ? currentUser.id : null]);
 
   useEffect(() => {
     load();
   }, [load]);
 
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(""), 2400);
+    return () => clearTimeout(timer);
+  }, [notice]);
+
   async function toggleFollow() {
     if (!currentUser) {
-      setError("Select a user in the top bar first.");
+      setError("Pick an account in the More menu first.");
       return;
     }
     setBusy(true);
@@ -57,7 +79,6 @@ export default function ProfilePage() {
         await followUser(profile.id, currentUser.id);
       }
       await load();
-      setPostsVersion((v) => v + 1);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -65,11 +86,11 @@ export default function ProfilePage() {
     }
   }
 
-  if (loading) return <div className="loading">Loading profile…</div>;
+  if (loading) return <div className="loading">Loading…</div>;
 
   if (error && !profile) {
     return (
-      <div>
+      <div className="narrow-page">
         <div className="error">{error}</div>
         <button className="btn" onClick={load}>
           Retry
@@ -81,49 +102,162 @@ export default function ProfilePage() {
   const isSelf = currentUser && profile && currentUser.id === profile.id;
 
   return (
-    <>
-      <div className="profile-head">
-        <div className="avatar">
+    <div className="narrow-page">
+      <header className="profile-header">
+        <div className="profile-avatar">
           {profile.profileImage ? (
             <img src={mediaUrl(profile.profileImage)} alt={profile.username} />
           ) : (
-            profile.username.charAt(0).toUpperCase()
+            <PersonIcon size={72} />
           )}
         </div>
 
-        <div>
-          <h1 className="profile-name">{profile.username}</h1>
+        <div className="profile-info">
+          <div className="profile-topline">
+            <h1>{profile.username}</h1>
 
-          <div className="profile-stats">
-            <span>
-              <strong>{profile.postsCount}</strong> posts
-            </span>
-            <span>
-              <strong>{profile.followersCount}</strong> followers
-            </span>
-            <span>
-              <strong>{profile.followingCount}</strong> following
-            </span>
-          </div>
-
-          <div className="profile-actions">
             {!isSelf && (
+              <>
+                <button
+                  className={`btn ${profile.following ? "btn-secondary" : "btn-primary"}`}
+                  onClick={toggleFollow}
+                  disabled={busy}
+                >
+                  {busy ? "…" : profile.following ? "Following" : "Follow"}
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setNotice("Direct messages are not part of this demo.")}
+                >
+                  Message
+                </button>
+              </>
+            )}
+
+            {isSelf && (
               <button
-                className="btn btn-primary btn-small"
-                onClick={toggleFollow}
-                disabled={busy}
+                className="btn btn-secondary"
+                onClick={() => setNotice("Profile editing is not part of this demo.")}
               >
-                {busy ? "…" : profile.following ? "Unfollow" : "Follow"}
+                Edit profile
               </button>
             )}
+
+            <button
+              className="post-more"
+              onClick={() => setNotice("Settings are not part of this demo.")}
+              aria-label="Settings"
+            >
+              <SettingsIcon />
+            </button>
           </div>
+
+          <ul className="profile-stats">
+            <li>
+              <strong>{profile.postsCount}</strong> posts
+            </li>
+            <li>
+              <strong>{profile.followersCount}</strong> followers
+            </li>
+            <li>
+              <strong>{profile.followingCount}</strong> following
+            </li>
+          </ul>
+
+          <p className="profile-name">{profile.username}</p>
+          <p className="profile-bio">
+            InstaLite demo account
+            <br />
+            Photos &amp; short videos · built with Spring Boot + Next.js
+          </p>
         </div>
+      </header>
+
+      <div className="profile-stats-mobile">
+        <ul>
+          <li>
+            <strong>{profile.postsCount}</strong>
+            <span>posts</span>
+          </li>
+          <li>
+            <strong>{profile.followersCount}</strong>
+            <span>followers</span>
+          </li>
+          <li>
+            <strong>{profile.followingCount}</strong>
+            <span>following</span>
+          </li>
+        </ul>
       </div>
 
-      {error && <div className="error">{error}</div>}
+      <div className="profile-tabs">
+        <button className="profile-tab active">
+          <GridIcon /> Posts
+        </button>
+        <button
+          className="profile-tab"
+          onClick={() => setNotice("Reels are not part of this demo.")}
+        >
+          <ReelsTabIcon /> Reels
+        </button>
+        <button
+          className="profile-tab"
+          onClick={() => setNotice("Tagged posts are not part of this demo.")}
+        >
+          <TaggedIcon /> Tagged
+        </button>
+      </div>
 
-      <h2 className="page-title">Posts</h2>
-      <Feed key={postsVersion} userId={profile.id} />
-    </>
+      {posts.length === 0 ? (
+        <div className="empty">
+          <div style={{ fontSize: 44, color: "#dbdbdb" }}>◎</div>
+          <strong style={{ color: "#262626", fontSize: 28, display: "block" }}>
+            Share Photos
+          </strong>
+          When {isSelf ? "you share" : `${profile.username} shares`} photos, they will
+          appear on the profile.
+        </div>
+      ) : (
+        <div className="profile-grid">
+          {posts.map((post) => (
+            <button
+              key={post.id}
+              className="grid-item"
+              onClick={() => setSelected(post)}
+              aria-label={`Open post ${post.id}`}
+            >
+              {post.mediaType === "VIDEO" ? (
+                <video src={mediaUrl(post.mediaUrl)} muted playsInline preload="metadata" />
+              ) : (
+                <img src={mediaUrl(post.mediaUrl)} alt={post.caption || ""} />
+              )}
+              {post.mediaType === "VIDEO" && (
+                <span className="grid-badge">
+                  <ReelsTabIcon />
+                </span>
+              )}
+              <span className="grid-overlay">
+                <span>
+                  <HeartIcon size={18} filled /> {post.likeCount}
+                </span>
+                <span>
+                  <CommentIcon /> {post.commentCount}
+                </span>
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {selected && (
+        <div className="overlay" onClick={() => setSelected(null)}>
+          <div className="dialog dialog-wide" onClick={(e) => e.stopPropagation()}>
+            <PostCard post={selected} onChanged={load} />
+          </div>
+        </div>
+      )}
+
+      {notice && <div className="toast">{notice}</div>}
+    </div>
   );
 }
