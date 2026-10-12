@@ -17,6 +17,36 @@ scalability) are in [docs/DESIGN.md](docs/DESIGN.md).
 
 ---
 
+## Screenshots
+
+Full-screen captures (1440x900) of the running frontend:
+
+| Home feed | User profile |
+|---|---|
+| ![Home feed](docs/screenshots/home.png) | ![User profile](docs/screenshots/profile.png) |
+
+| Create new post | Mobile layout (414x896) |
+|---|---|
+| ![Create new post dialog](docs/screenshots/upload.png) | ![Mobile home feed](docs/screenshots/home-mobile.png) |
+
+## Demo video
+
+A 38-second screen recording of the complete flow: browse the feed -> like a
+post -> write a comment -> open the author's profile -> follow -> create and
+publish a new post -> see it appear at the top of the feed.
+
+[![Watch the demo video](docs/screenshots/demo-poster.jpg)](docs/screenshots/demo.mp4)
+
+▶ **[Play demo.mp4](docs/screenshots/demo.mp4)** - 1440x900, H.264, ~0.8 MB
+
+> The poster image links straight to the MP4 because GitHub READMEs only play
+> videos uploaded as attachments, not in-repo paths. The recording was produced
+> by [docs/record-demo.mjs](docs/record-demo.mjs), which drives the real UI over
+> the Chrome DevTools Protocol and encodes the captured frames with ffmpeg -
+> rerun it with `node docs/record-demo.mjs` to regenerate the video.
+
+---
+
 ## 1. Prerequisites
 
 | Tool     | Version        | Check            |
